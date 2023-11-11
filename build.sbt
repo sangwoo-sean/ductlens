@@ -6,8 +6,8 @@ inThisBuild(
 
 lazy val root = (project in file("."))
   .settings(
-    name := "ductlens",
-    version          := "0.1.0-SNAPSHOT",
+    name    := "ductlens",
+    version := "0.1.0-SNAPSHOT",
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
     wartremoverWarnings ++= Warts.all,
   )
@@ -15,7 +15,8 @@ lazy val root = (project in file("."))
 lazy val backend = (project in file("backend"))
   .settings(
     libraryDependencies ++= Seq(
-      "dev.zio" %% "zio" % "2.0.19",
+      "dev.zio" %% "zio"      % "2.0.19",
+      "dev.zio" %% "zio-http" % "3.0.0-RC3",
       "dev.zio" %% "zio-test" % "2.0.19" % Test
     ),
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
