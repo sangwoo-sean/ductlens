@@ -8,7 +8,8 @@ lazy val root = (project in file("."))
   .settings(
     name := "ductlens",
     version          := "0.1.0-SNAPSHOT",
-    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
+    wartremoverWarnings ++= Warts.all,
   )
 
 lazy val backend = (project in file("backend"))
