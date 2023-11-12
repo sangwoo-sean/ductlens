@@ -9,7 +9,7 @@ function App() {
   //todo: tailwind setup
   //todo: zod
   useEffect(() => {
-    fetch(baseURI + "products")
+    fetch(baseURI + "/products")
       .then(res => res.json())
       .then(res => {
         setProducts(res)
