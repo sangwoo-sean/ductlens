@@ -23,7 +23,7 @@ function App() {
     upvoted: number;
   }
   return (
-    <>
+    <div className="w-full flex flex-col">
       <h1>Ductlens</h1>
       <div>
         {products.map(p => (
@@ -33,7 +33,7 @@ function App() {
             <div>upvoted: {p.upvoted}</div>
           </div>))}
       </div>
-    </>
+    </div>
   )
 }
 
