@@ -12,7 +12,7 @@ object Main extends ZIOAppDefault {
       Method.GET / "products" -> handler(
         ProductRepository.getProducts.map(products => Response.json(products.toJson))
       )
-    ).toHttpApp
+    ).toHttpApp @@ Middleware.cors
 
   override def run: ZIO[Environment & ZIOAppArgs & Scope, Any, Any] =
     Server
