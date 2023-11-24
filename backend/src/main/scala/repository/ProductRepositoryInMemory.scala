@@ -65,6 +65,14 @@ object ProductRepositoryInMemory {
       "https://avatars.slack-edge.com/2023-01-25/4682316783575_bbab0cdcdb3685eb5c87_512.png",
       "https://claude.ai/"
     ),
+    Product(
+      "8",
+      "Chatgot",
+      "Chat Freely, Got Every AI Assistants Here for You",
+      1,
+      "https://cdn-1.webcatalog.io/catalog/chatgot/chatgot-icon-filled-256.webp?v=1699344518859",
+      "https://www.chatgot.io/"
+    ),
   )
 
   def layer: ZLayer[Any, Nothing, ProductRepository] = ZLayer.succeed(ProductRepositoryInMemory())
