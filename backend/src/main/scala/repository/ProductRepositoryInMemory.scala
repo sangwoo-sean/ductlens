@@ -4,18 +4,38 @@ import domain.Product
 import zio.{Exit, Ref, UIO, ZIO, ZLayer}
 
 case class ProductRepositoryInMemory(products: Ref[List[Product]]) extends ProductRepository {
-  override def getProducts: UIO[List[Product]]  = products.get
-  override def add(product: Product): UIO[Unit] = products.update { prev => prev :+ product }
+  override def getProducts: UIO[List[Product]]            = products.get
+  override def add(product: Product): UIO[Unit]           = products.update { prev => prev :+ product }
   override def findById(id: String): UIO[Option[Product]] = products.get.map(_.find(_.id == id))
   override def deleteById(id: String): UIO[Either[Exception, Unit]] =
     for {
-      ps <- products.get
-      result <- ps.find(_.id == id) match {
+      maybeTarget <- products.get.map(_.find(_.id == id))
+      result <- maybeTarget match {
         case Some(_) => {
-          products.update { prev => prev.filterNot(_.id == id) }.asRight
+          products.update { ps => ps.filterNot(_.id == id) }.asRight
         }
         case None => ZIO.succeed(Left(new Exception("Product not found")))
       }
+    } yield result
+  override def update(product: Product): UIO[Either[Exception, Unit]] =
+    for {
+      maybeTarget <- products.get.map(_.find(_.id == product.id))
+
+      result <- maybeTarget match
+        case Some(target) =>
+          products.update { ps =>
+            ps.map {
+              case p if p.id == target.id =>
+                target.copy(
+                  name = product.name,
+                  description = product.description,
+                  imageUrl = product.imageUrl,
+                  url = product.url
+                )
+              case p => p
+            }
+          }.asRight
+        case None => ZIO.succeed(Left(new Exception("Product not found")))
     } yield result
 
 }

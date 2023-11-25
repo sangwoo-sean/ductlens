@@ -8,6 +8,7 @@ trait ProductRepository {
   def add(product: Product): UIO[Unit]
   def findById(id: String): UIO[Option[Product]]
   def deleteById(id: String): UIO[Either[Exception, Unit]]
+  def update(product: Product): UIO[Either[Exception, Unit]]
 }
 
 object ProductRepository {

@@ -34,7 +34,7 @@ object ProductRepositoryInMemoryTest extends ZIOSpecDefault {
           found <- service.findById(newId)
         } yield assertTrue(found.exists(_.name == "test name"))
       },
-      suite("deleteById") (
+      suite("deleteById")(
         test("success") {
           for {
             service <- ZIO.service[ProductRepository]
@@ -52,7 +52,7 @@ object ProductRepositoryInMemoryTest extends ZIOSpecDefault {
             )
             found <- service.findById(newId)
 
-            result <- service.deleteById(newId)
+            result           <- service.deleteById(newId)
             foundAfterDelete <- service.findById(newId)
           } yield assertTrue(found.exists(_.name == "test name") && result.isRight && foundAfterDelete.isEmpty)
         },
@@ -63,6 +63,53 @@ object ProductRepositoryInMemoryTest extends ZIOSpecDefault {
             newId = UUID.randomUUID().toString
             result <- service.deleteById(newId)
           } yield assertTrue(result.isLeft)
+        },
+      ),
+      suite("update")(
+        test("success") {
+          for {
+            service <- ZIO.service[ProductRepository]
+
+            newId = UUID.randomUUID().toString
+            _ <- service.add(
+              Product(
+                id = newId,
+                name = "test name",
+                description = "test description",
+                upvoted = 0,
+                imageUrl = "test image url",
+                url = "test url"
+              )
+            )
+
+            result <- service.update(Product(
+              id = newId,
+              name = "updated name",
+              description = "updated description",
+              upvoted = 0,
+              imageUrl = "updated image url",
+              url = "updated url"
+            ))
+
+            found <- service.findById(newId)
+          } yield assertTrue(result.isRight && found.map(_.name).contains("updated name"))
+        },
+        test("fail") {
+          for {
+            service <- ZIO.service[ProductRepository]
+
+            newId = UUID.randomUUID().toString
+            result <- service.update(Product(
+              id = newId,
+              name = "updated name",
+              description = "updated description",
+              upvoted = 0,
+              imageUrl = "updated image url",
+              url = "updated url"
+            ))
+
+            found <- service.findById(newId)
+          } yield assertTrue(result.isLeft && found.isEmpty)
         },
       )
     ).provideShared(ProductRepositoryInMemory.layer)
