@@ -4,7 +4,9 @@ import domain.Product
 import zio.{Ref, UIO, ZIO, ZLayer}
 
 case class ProductRepositoryInMemory(products: Ref[List[Product]]) extends ProductRepository {
-  override def getProducts: UIO[List[Product]] = products.get
+  override def getProducts: UIO[List[Product]]  = products.get
+  override def add(product: Product): UIO[Unit] = products.update { prev => prev :+ product }
+  override def findById(id: String): UIO[Option[Product]] = products.get.map(_.find(_.id == id))
 }
 
 object ProductRepositoryInMemory {
@@ -75,11 +77,11 @@ object ProductRepositoryInMemory {
     ),
   )
 
-  def layer: ZLayer[Any, Nothing, ProductRepository] = ZLayer {
+  val layer: ZLayer[Any, Nothing, ProductRepository] = ZLayer {
     for {
-      _ <- ZIO.logInfo("loading products...")
+      _  <- ZIO.logInfo("loading products...")
       ps <- Ref.make(products)
-      _ <- ZIO.logInfo(s"loaded ${products.size} products")
+      _  <- ZIO.logInfo(s"loaded ${products.size} products")
     } yield ProductRepositoryInMemory(ps)
   }
 }

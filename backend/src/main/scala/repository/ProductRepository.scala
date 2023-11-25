@@ -5,6 +5,8 @@ import zio.*
 
 trait ProductRepository {
   def getProducts: UIO[List[Product]]
+  def add(product: Product): UIO[Unit]
+  def findById(id: String): UIO[Option[Product]]
 }
 
 object ProductRepository {
