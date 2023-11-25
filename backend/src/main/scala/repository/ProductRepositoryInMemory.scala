@@ -1,10 +1,10 @@
 package repository
 
 import domain.Product
-import zio.ZLayer
+import zio.{Ref, UIO, ZIO, ZLayer}
 
-case class ProductRepositoryInMemory() extends ProductRepository {
-  override def getProducts: List[Product] = ProductRepositoryInMemory.products
+case class ProductRepositoryInMemory(products: Ref[List[Product]]) extends ProductRepository {
+  override def getProducts: UIO[List[Product]] = products.get
 }
 
 object ProductRepositoryInMemory {
@@ -75,5 +75,11 @@ object ProductRepositoryInMemory {
     ),
   )
 
-  def layer: ZLayer[Any, Nothing, ProductRepository] = ZLayer.succeed(ProductRepositoryInMemory())
+  def layer: ZLayer[Any, Nothing, ProductRepository] = ZLayer {
+    for {
+      _ <- ZIO.logInfo("loading products...")
+      ps <- Ref.make(products)
+      _ <- ZIO.logInfo(s"loaded ${products.size} products")
+    } yield ProductRepositoryInMemory(ps)
+  }
 }
