@@ -26,7 +26,7 @@ function App() {
   }, []);
 
   return (
-    <div className='flex flex-col items-center'>
+    <div className='flex flex-col items-center min-h-[100vh] min-w-[320px]'>
       <div className='pt-[2rem] pb-[3rem]'>
         <h1>Ductlens</h1>
       </div>
