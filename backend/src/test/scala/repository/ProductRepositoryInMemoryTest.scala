@@ -1,4 +1,4 @@
-package scala.repository
+package repository
 
 import domain.Product
 import repository.{ProductRepository, ProductRepositoryInMemory}

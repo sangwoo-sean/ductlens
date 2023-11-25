@@ -8,7 +8,6 @@ object Main extends ZIOAppDefault {
 
   private val app: HttpApp[ProductRepository] =
     Routes(
-      Method.GET / "text" -> handler(Response.text("Hello World!")),
       Method.GET / "api" / "products" -> handler(
         ProductRepository.getProducts.map(products => Response.json(products.toJson))
       )
