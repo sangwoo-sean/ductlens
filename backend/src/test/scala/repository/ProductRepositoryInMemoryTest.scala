@@ -19,10 +19,8 @@ object ProductRepositoryInMemoryTest extends ZIOSpecDefault {
       test("add & findById") {
         for {
           service <- ZIO.service[ProductRepository]
-          before  <- service.getProducts
 
           newId = UUID.randomUUID().toString
-          _ = println(s"newId = ${newId}")
           _ <- service.add(
             Product(
               id = newId,
@@ -34,8 +32,38 @@ object ProductRepositoryInMemoryTest extends ZIOSpecDefault {
             )
           )
           found <- service.findById(newId)
-          after <- service.getProducts
-        } yield assertTrue(before.size == after.size - 1 && found.exists(_.name == "test name"))
+        } yield assertTrue(found.exists(_.name == "test name"))
       },
-    ).provide(ProductRepositoryInMemory.layer)
+      suite("deleteById") (
+        test("success") {
+          for {
+            service <- ZIO.service[ProductRepository]
+
+            newId = UUID.randomUUID().toString
+            _ <- service.add(
+              Product(
+                id = newId,
+                name = "test name",
+                description = "test description",
+                upvoted = 0,
+                imageUrl = "test image url",
+                url = "test url"
+              )
+            )
+            found <- service.findById(newId)
+
+            result <- service.deleteById(newId)
+            foundAfterDelete <- service.findById(newId)
+          } yield assertTrue(found.exists(_.name == "test name") && result.isRight && foundAfterDelete.isEmpty)
+        },
+        test("fail") {
+          for {
+            service <- ZIO.service[ProductRepository]
+
+            newId = UUID.randomUUID().toString
+            result <- service.deleteById(newId)
+          } yield assertTrue(result.isLeft)
+        },
+      )
+    ).provideShared(ProductRepositoryInMemory.layer)
 }

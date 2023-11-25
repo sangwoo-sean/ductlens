@@ -1,12 +1,23 @@
 package repository
 
 import domain.Product
-import zio.{Ref, UIO, ZIO, ZLayer}
+import zio.{Exit, Ref, UIO, ZIO, ZLayer}
 
 case class ProductRepositoryInMemory(products: Ref[List[Product]]) extends ProductRepository {
   override def getProducts: UIO[List[Product]]  = products.get
   override def add(product: Product): UIO[Unit] = products.update { prev => prev :+ product }
   override def findById(id: String): UIO[Option[Product]] = products.get.map(_.find(_.id == id))
+  override def deleteById(id: String): UIO[Either[Exception, Unit]] =
+    for {
+      ps <- products.get
+      result <- ps.find(_.id == id) match {
+        case Some(_) => {
+          products.update { prev => prev.filterNot(_.id == id) }.asRight
+        }
+        case None => ZIO.succeed(Left(new Exception("Product not found")))
+      }
+    } yield result
+
 }
 
 object ProductRepositoryInMemory {
