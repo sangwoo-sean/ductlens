@@ -29,24 +29,24 @@ const CustomTextInput: React.FC<CustomTextInputProps> = React.memo(
 );
 
 const ProductAddForm = () => {
-  const [name, setName] = useState('1');
-  const [description, setDescription] = useState('2');
-  const [imageUrl, setImageUrl] = useState('3');
-  const [url, setUrl] = useState('4');
+  const [name, setName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [url, setUrl] = useState<string>('');
 
-  const handleNameChange = useCallback((e) => {
+  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   }, []);
 
-  const handleDescriptionChange = useCallback((e) => {
+  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setDescription(e.target.value);
   }, []);
 
-  const handleLogoImageUrlChange = useCallback((e) => {
+  const handleLogoImageUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setImageUrl(e.target.value);
   }, []);
 
-  const handleWebPageUrlChange = useCallback((e) => {
+  const handleWebPageUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value);
   }, []);
 
@@ -63,9 +63,18 @@ const ProductAddForm = () => {
         url,
       }),
     })
-      .then((res) => res.json())
       .then((res) => {
-        console.log(res);
+        if (res.ok) {
+          setName('');
+          setDescription('');
+          setImageUrl('');
+          setUrl('');
+          alert("등록 성공");
+        }
+        else {
+          console.error(res);
+          alert("오류발생");
+        }
       });
   }, []);
 
