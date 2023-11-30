@@ -1,8 +1,10 @@
+import domain.*
 import repository.{ProductRepository, ProductRepositoryInMemory}
 import zio.*
-import zio.Console.printLine
 import zio.http.*
 import zio.json.*
+
+import java.util.UUID
 
 final case class ProductAddRequest(name: String, description: String, imageUrl: String, url: String) derives JsonCodec
 
@@ -15,12 +17,26 @@ object Main extends ZIOAppDefault {
       ),
       Method.POST / "api" / "products" -> handler { (request: Request) =>
         for {
-          _ <- ZIO.unit
-
           body <- request.body.asString
-          _ = println (s"body = ${body}")
-
-        } yield Response.json("{}")
+          response <- body.fromJson[ProductAddRequest] match
+            case Left(reason) =>
+              ZIO.succeed(Response.badRequest(reason))
+            case Right(req) =>
+              ZIO
+                .serviceWithZIO[ProductRepository](
+                  _.add(
+                    Product(
+                      UUID.randomUUID().toString,
+                      req.name,
+                      req.description,
+                      0,
+                      req.imageUrl,
+                      req.url
+                    )
+                  )
+                )
+                .as(Response(Status.NoContent))
+        } yield response
       }
     ) @@ Middleware.cors)
       .handleError(e => Response.internalServerError)
