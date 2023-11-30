@@ -11,6 +11,7 @@ lazy val root = (project in file("."))
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
     wartremoverWarnings ++= Warts.all,
   )
+  .aggregate(backend)
 
 lazy val backend = (project in file("backend"))
   .settings(
