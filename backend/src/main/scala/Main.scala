@@ -8,21 +8,23 @@ final case class ProductAddRequest(name: String, description: String, imageUrl: 
 
 object Main extends ZIOAppDefault {
 
-
   private val app: HttpApp[ProductRepository] =
-    Routes(
+    (Routes(
       Method.GET / "api" / "products" -> handler(
         ProductRepository.getProducts.map(products => Response.json(products.toJson))
       ),
       Method.POST / "api" / "products" -> handler { (request: Request) =>
         for {
           _ <- ZIO.unit
-//          body = request.body // no problem
-          body <- request.body.asString //crash compile
+
+          body <- request.body.asString
+          _ = println (s"body = ${body}")
 
         } yield Response.json("{}")
       }
-    ).toHttpApp @@ Middleware.cors
+    ) @@ Middleware.cors)
+      .handleError(e => Response.internalServerError)
+      .toHttpApp
 
   override def run: ZIO[Environment & ZIOAppArgs & Scope, Any, Any] =
     Server
