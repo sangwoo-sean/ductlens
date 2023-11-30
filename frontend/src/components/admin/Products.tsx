@@ -25,17 +25,19 @@ const Products = () => {
             <th>description</th>
             <th>url</th>
             <th>upvoted</th>
+            <th>delete</th>
           </tr>
           {products.map((p) => (
             <tr key={p.id}>
               <td>{p.id}</td>
               <td>
-                <img src={p.imageUrl} width={80} height={80} alt="logo" />
+                <img src={p.imageUrl} className="w-[80px] h-[80px]" alt="logo" />
               </td>
               <td>{p.name}</td>
               <td>{p.description}</td>
               <td>{p.url}</td>
-              <td>{p.upvoted}</td>
+              <td className="text-center">{p.upvoted}</td>
+              <td><button className="bg-red-400 hover:bg-red-500 text-white p-2 w-14 rounded">삭제</button></td>
             </tr>
           ))}
         </tbody>
