@@ -1,6 +1,6 @@
 package repository
 
-import domain.Product
+import model.domain.Product
 import repository.{ProductRepository, ProductRepositoryInMemory}
 import zio.*
 import zio.test.*
@@ -26,7 +26,6 @@ object ProductRepositoryInMemoryTest extends ZIOSpecDefault {
               id = newId,
               name = "test name",
               description = "test description",
-              upvoted = 0,
               imageUrl = "test image url",
               url = "test url"
             )
@@ -45,7 +44,6 @@ object ProductRepositoryInMemoryTest extends ZIOSpecDefault {
                 id = newId,
                 name = "test name",
                 description = "test description",
-                upvoted = 0,
                 imageUrl = "test image url",
                 url = "test url"
               )
@@ -76,7 +74,6 @@ object ProductRepositoryInMemoryTest extends ZIOSpecDefault {
                 id = newId,
                 name = "test name",
                 description = "test description",
-                upvoted = 0,
                 imageUrl = "test image url",
                 url = "test url"
               )
@@ -86,7 +83,6 @@ object ProductRepositoryInMemoryTest extends ZIOSpecDefault {
               id = newId,
               name = "updated name",
               description = "updated description",
-              upvoted = 0,
               imageUrl = "updated image url",
               url = "updated url"
             ))
@@ -103,7 +99,6 @@ object ProductRepositoryInMemoryTest extends ZIOSpecDefault {
               id = newId,
               name = "updated name",
               description = "updated description",
-              upvoted = 0,
               imageUrl = "updated image url",
               url = "updated url"
             ))

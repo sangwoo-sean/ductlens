@@ -1,19 +1,32 @@
-import domain.*
-import repository.{ProductRepository, ProductRepositoryInMemory}
+import model.domain.{Product, Upvote}
+import model.view.*
+import model.request.*
+import repository.{ProductRepository, ProductRepositoryInMemory, UpvoteRepository, UpvoteRepositoryInMemory}
 import zio.*
 import zio.http.*
 import zio.json.*
 
+import java.time.LocalDateTime
 import java.util.UUID
-
-final case class ProductAddRequest(name: String, description: String, imageUrl: String, url: String) derives JsonCodec
 
 object Main extends ZIOAppDefault {
 
-  private val app: HttpApp[ProductRepository] =
+  private val app: HttpApp[ProductRepository with UpvoteRepository] =
     (Routes(
       Method.GET / "api" / "products" -> handler(
-        ProductRepository.getProducts.map(products => Response.json(products.toJson))
+        for {
+          products <- ProductRepository.getProducts
+          upvotes  <- ZIO.serviceWithZIO[UpvoteRepository](_.getAll)
+        } yield Response.json(products.map { p =>
+          ProductView(
+            id = p.id,
+            name = p.name,
+            description = p.description,
+            imageUrl = p.imageUrl,
+            url = p.url,
+            upvoted = upvotes.count(_.productId == p.id)
+          )
+        }.toJson)
       ),
       Method.POST / "api" / "products" -> handler { (request: Request) =>
         for {
@@ -29,7 +42,6 @@ object Main extends ZIOAppDefault {
                       UUID.randomUUID().toString,
                       req.name,
                       req.description,
-                      0,
                       req.imageUrl,
                       req.url
                     )
@@ -43,7 +55,21 @@ object Main extends ZIOAppDefault {
           case Left(error) => Response.badRequest(error.getMessage)
           case Right(_)    => Response(Status.NoContent)
         }
-      }
+      },
+      Method.POST / "api" / "products" / string("id") / "upvote" -> handler { (id: String, request: Request) =>
+        for {
+          _ <- ZIO.logInfo(s"id: $id")
+          _ <- ZIO.serviceWithZIO[UpvoteRepository](
+            _.add(
+              Upvote(
+                id = UUID.randomUUID().toString,
+                productId = id,
+                createdAt = LocalDateTime.now()
+              )
+            )
+          )
+        } yield Response(Status.NoContent)
+      },
     ) @@ Middleware.cors)
       .handleError(e => Response.internalServerError)
       .toHttpApp
@@ -52,5 +78,5 @@ object Main extends ZIOAppDefault {
     Server
       .install(app)
       .flatMap(port => ZIO.logInfo(s"Listening on port $port") *> ZIO.never)
-      .provide(Server.defaultWithPort(8080), ProductRepositoryInMemory.layer)
+      .provide(Server.defaultWithPort(8080), ProductRepositoryInMemory.layer, UpvoteRepositoryInMemory.layer)
 }

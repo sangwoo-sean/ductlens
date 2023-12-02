@@ -1,6 +1,6 @@
 package repository
 
-import domain.Product
+import model.domain.Product
 import zio.*
 
 trait ProductRepository {

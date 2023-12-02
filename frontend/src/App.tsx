@@ -24,6 +24,15 @@ function App() {
         setProducts(res);
       });
   }, []);
+  
+  const onUpvoted: (productId: String) => void = (productId: String) => {
+    setProducts((ps) => [
+      ...ps.map((p) => ({
+        ...p,
+        upvoted: p.upvoted + (p.id === productId ? 1 : 0),
+      })),
+    ]);
+  }
 
   return (
     <div className='flex flex-col items-center min-h-[100vh] min-w-[320px]'>
@@ -31,7 +40,7 @@ function App() {
         <h1>Ductlens</h1>
       </div>
       <div className='flex flex-col gap-2'>
-        {products.map(p => <ProductItem key={p.id} {...p} />)}
+        {products.map(p => <ProductItem key={p.id} {...p} onUpvoted={onUpvoted} />)}
       </div>
     </div>
   );
