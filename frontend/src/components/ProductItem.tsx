@@ -1,6 +1,5 @@
 import React from 'react';
-
-const baseURI = import.meta.env.VITE_API_URL;
+import { APIClient } from '../lib/APIClient.ts';
 
 export type ProductItemProps = {
   id: string;
@@ -22,16 +21,11 @@ const ProductItem: React.FC<ProductItemProps> = ({
   onUpvoted,
 }) => {
   const clickUpvote = (e: React.MouseEvent<HTMLButtonElement>) => {
-    fetch(baseURI + `/products/${id}/upvote`, {
-      method: 'POST',
-    }).then((res) => {
-      if (res.ok) {
+    new APIClient()
+      .fetch<void>(`/products/${id}/upvote`, { method: 'POST' })
+      .then(() => {
         onUpvoted(id);
-      } else {
-        console.error(res);
-      }
-    });
-
+      });
     e.stopPropagation();
   };
 

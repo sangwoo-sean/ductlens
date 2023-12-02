@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
-
-const baseURI = import.meta.env.VITE_API_URL;
+import { APIClient } from '../../lib/APIClient.ts';
 
 type CustomTextInputProps = {
   name: string;
@@ -34,47 +33,54 @@ const ProductAddForm = () => {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [url, setUrl] = useState<string>('');
 
-  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  }, []);
+  const handleNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setName(e.target.value);
+    },
+    [],
+  );
 
-  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setDescription(e.target.value);
-  }, []);
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setDescription(e.target.value);
+    },
+    [],
+  );
 
-  const handleLogoImageUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUrl(e.target.value);
-  }, []);
+  const handleLogoImageUrlChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setImageUrl(e.target.value);
+    },
+    [],
+  );
 
-  const handleWebPageUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setUrl(e.target.value);
-  }, []);
+  const handleWebPageUrlChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setUrl(e.target.value);
+    },
+    [],
+  );
 
   const handleSubmit = useCallback(() => {
-    fetch(baseURI + '/products', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name,
-        description,
-        imageUrl,
-        url,
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          setName('');
-          setDescription('');
-          setImageUrl('');
-          setUrl('');
-          alert("등록 성공");
-        }
-        else {
-          console.error(res);
-          alert("오류발생");
-        }
+    new APIClient()
+      .fetch<void>('/products', {
+        method: 'POST',
+        body: {
+          name,
+          description,
+          imageUrl,
+          url,
+        },
+      })
+      .then(() => {
+        setName('');
+        setDescription('');
+        setImageUrl('');
+        setUrl('');
+        alert('등록 성공');
+      })
+      .catch(() => {
+        alert('오류발생');
       });
   }, []);
 
