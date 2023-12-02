@@ -82,7 +82,7 @@ const ProductAddForm = () => {
       .catch(() => {
         alert('오류발생');
       });
-  }, []);
+  }, [name, description, imageUrl, url]);
 
   return (
     <div className="p-2">
