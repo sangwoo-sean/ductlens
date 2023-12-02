@@ -55,7 +55,7 @@ object ProductRepositoryInMemory {
       "TickerBell",
       "Financial News & Research Automation",
       1,
-      "src/assets/tickerbell.png",
+      "/src/assets/tickerbell.png",
       "https://tickerbell.ai/marketlive"
     ),
     Product(
@@ -63,7 +63,7 @@ object ProductRepositoryInMemory {
       "Dead Rabbit",
       "Finance Newsletter Auto‑Generated",
       1,
-      "src/assets/deadrabbit.png",
+      "/src/assets/deadrabbit.png",
       "https://tickerbell.ai/newsletter"
     ),
     Product(
@@ -71,7 +71,7 @@ object ProductRepositoryInMemory {
       "financeGPT",
       "Natural Language Search, Personal Chatbot on Markets",
       1,
-      "src/assets/financegpt.png",
+      "/src/assets/financegpt.png",
       "https://tickerbell.ai/financegpt"
     ),
     Product(

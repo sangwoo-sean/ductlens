@@ -37,6 +37,12 @@ object Main extends ZIOAppDefault {
                 )
                 .as(Response(Status.NoContent))
         } yield response
+      },
+      Method.DELETE / "api" / "products" / string("id") -> handler { (id: String, req: Request) =>
+        ZIO.serviceWithZIO[ProductRepository](_.deleteById(id)).map {
+          case Left(error) => Response.badRequest(error.getMessage)
+          case Right(_)    => Response(Status.NoContent)
+        }
       }
     ) @@ Middleware.cors)
       .handleError(e => Response.internalServerError)
