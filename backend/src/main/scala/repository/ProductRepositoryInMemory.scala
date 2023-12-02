@@ -106,6 +106,14 @@ object ProductRepositoryInMemory {
       "https://cdn-1.webcatalog.io/catalog/chatgot/chatgot-icon-filled-256.webp?v=1699344518859",
       "https://www.chatgot.io/"
     ),
+    Product(
+      "9",
+      "Clipdrop",
+      "CREATE STUNNING VISUALS IN SECONDS",
+      1,
+      "https://static.clipdrop.co/web/homepage/preview.jpg",
+      "https://clipdrop.co/"
+    ),
   )
 
   val layer: ZLayer[Any, Nothing, ProductRepository] = ZLayer {

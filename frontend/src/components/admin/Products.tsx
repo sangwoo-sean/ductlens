@@ -31,7 +31,7 @@ const Products = () => {
             <tr key={p.id}>
               <td>{p.id}</td>
               <td>
-                <img src={p.imageUrl} className="w-[80px] h-[80px]" alt="logo" />
+                <img src={p.imageUrl} className="w-[80px] h-[80px] object-contain" alt="logo" />
               </td>
               <td>{p.name}</td>
               <td>{p.description}</td>
