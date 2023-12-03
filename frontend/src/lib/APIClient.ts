@@ -23,6 +23,7 @@ class APIClient {
     }
 
     if (result.ok) {
+      console.log(result);
       if (result.status === 204) return void 0 as unknown as T;
       return result.json();
     }
